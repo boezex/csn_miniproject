@@ -1,6 +1,8 @@
 import paho.mqtt.client as mqtt
 import gpiozero
 
+status = "armed"
+
 button = gpiozero.Button(2)
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -18,7 +20,7 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("daanpi", 1883, 60)
+client.connect("boezemail.nl", 1883, 60)
 
 while True:
     if button.is_pressed:
