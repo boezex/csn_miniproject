@@ -1,3 +1,5 @@
+from time import sleep
+
 import paho.mqtt.client as mqtt
 import gpiozero
 
@@ -25,3 +27,4 @@ client.connect("boezemail.nl", 1883, 60)
 while True:
     if button.is_pressed:
         client.publish("/domo","on")
+        sleep(1)
