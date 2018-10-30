@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import gpiozero
 
+red  = gpiozero.Buzzer(3)
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -12,8 +13,8 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
-    red  = gpiozero.Buzzer(3)
-    red.blink(n = 1)
+    if str(msg.payload) == "triggered":
+        red.blink(n = 4, on_time=0.25, off_time=0.25)
 
 
 

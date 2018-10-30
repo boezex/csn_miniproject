@@ -1,11 +1,9 @@
 from time import sleep
-
 import paho.mqtt.client as mqtt
 import gpiozero
 
-status = 1
+status = 0
 # status 0 = disarmed, status 1 = armed, status 2 =...
-
 sensor = gpiozero.Button(2)
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -19,20 +17,23 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     if str(msg.payload) == "disarm":
+        global status
         status = 0
-    elif str(msg.payload) == "arm":
+    if str(msg.payload) == "arm":
+        global status
         status = 1
 
+#Start of the program
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
 client.connect("boezemail.nl", 1883, 60)
 
+client.loop_start()
+
 while True:
-    if status == 1:
-        if not sensor.is_pressed:
-            client.publish("/domo","on")
+    while status == 1:
+        if sensor.is_pressed:
+            client.publish("/domo","triggered")
             sleep(1)
-
-
